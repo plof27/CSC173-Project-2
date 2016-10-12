@@ -14,7 +14,8 @@
     double: "%f", \
     long double: "%Lf", \
     char *: "%s", \
+    int *: "%p", \
     void *: "%p")
 
 #define print(x) printf(printf_dec_format(x), x)
-#define printnl(x) printf(printf_dec_format(x), x), printf("\n");
+#define println(x) printf(printf_dec_format(x), x), printf("\n");
