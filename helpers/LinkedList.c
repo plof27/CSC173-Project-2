@@ -37,7 +37,8 @@ data_type deleteFromList(LIST *pL, data_type x) {
 
 //prints a list in order
 void printList(LIST l) {
-      print(l->data);
+      //print(l->data);
+      printf("%c\n", l->data);
       printf(" ");
       if (l->next != NULL) {
             printList(l->next);

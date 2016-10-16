@@ -4,13 +4,14 @@
 #include "helpers/GenPrint.h"
 
 int main() {
-    printf("Hello World!\n");
 
+    /* GenPrint demo code
     int someVar = 100;
     println(someVar);
 
     int *someOtherVar = &someVar;
     println(someOtherVar);
+    */
 
     return 0;
 }
