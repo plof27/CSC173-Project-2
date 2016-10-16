@@ -25,6 +25,6 @@ int insert_to_leftmost_nonterminal(TREE, LIST);         //adds the data in the l
 int evaluate_tree(TREE);                                //evaluates the tree and frees all nodes from memory
 void free_tree(TREE);                                   //frees all the trees nodes from memory
 void print_tree(TREE);                                  //prints the tree all nicely
-void print_tree_helper(TREE, char*);                    //helper function to print_tree, this is what actually does the recursion
+void print_tree_helper(TREE, char*, int);                    //helper function to print_tree, this is what actually does the recursion
 
 #endif
