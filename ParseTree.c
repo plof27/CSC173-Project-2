@@ -3,13 +3,37 @@
 #include "ParseTree.h"
 
 TREE * create_tree(tree_data_type x) {
+    LIST terminals = NULL;
+    insertToList(&terminals, '+');
+    insertToList(&terminals, '-');
+    insertToList(&terminals, '*');
+    insertToList(&terminals, '/');
+    insertToList(&terminals, '(');
+    insertToList(&terminals, ')');
+    int i;
+    for (i=48; i<58; i++) {
+        char c = (char) i;
+        insertToList(&terminals, c);
+    }
+
     TREE *pT = (TREE *) malloc(sizeof(TREE));
     (*pT)->data = x;
-    (*pT)->terminal = 0;    //the first element should always be a non-terminal (make this better later~)
+    (*pT)->terminal = lookupInList(terminals, x);
 
     (*pT)->left = NULL;
     (*pT)->center = NULL;
     (*pT)->right = NULL;
+
+    deleteFromList(&terminals, '+');
+    deleteFromList(&terminals, '-');
+    deleteFromList(&terminals, '*');
+    deleteFromList(&terminals, '/');
+    deleteFromList(&terminals, '(');
+    deleteFromList(&terminals, ')');
+    for (i=48; i<58; i++) {
+        char c = (char) i;
+        deleteFromList(&terminals, c);
+    }
 
     return pT;
 }
@@ -17,6 +41,35 @@ TREE * create_tree(tree_data_type x) {
 int insert_to_leftmost_nonterminal(TREE t, LIST l) {
     if (t->terminal == 0 && t->left == NULL) {
         //leftmost non-terminal found!
+        int list_length = getLength(l); //find how many things are being added
+        if (list_length == 1) {
+            //insert to left only
+            TREE new_node = *(create_tree(l->data));
+
+            t->left = new_node;
+        } else if (list_length == 2) {
+            //insert to left and center
+            TREE new_left_node = *(create_tree(l->data));
+            l = l->next;
+            TREE new_center_node = *(create_tree(l->data));
+
+            t->left = new_left_node;
+            t->center = new_center_node;
+        } else if (list_length == 3) {
+            //insert to all three
+            TREE new_left_node = *(create_tree(l->data));
+            l = l->next;
+            TREE new_center_node = *(create_tree(l->data));
+            l= l->next;
+            TREE new_right_node = *(create_tree(l->data));
+
+            t->left = new_left_node;
+            t->center = new_center_node;
+            t->right = new_right_node;
+        } else {
+                printf("%s\n", "Error inserting elements");
+        }
+
         return 1;
     } else {
         int flag = 0;

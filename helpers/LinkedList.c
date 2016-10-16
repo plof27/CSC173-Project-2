@@ -61,3 +61,13 @@ int lookupInList(LIST l, data_type x) {
             return 0;
       }
 }
+
+int getLength(LIST l) {
+    LIST currentHead = l;
+    int length = 0;
+    while (currentHead != NULL) {
+        length++;
+        currentHead = currentHead->next;
+    }
+    return length;
+}

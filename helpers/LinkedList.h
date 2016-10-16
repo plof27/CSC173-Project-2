@@ -19,5 +19,6 @@ void insertToList(LIST *, data_type);
 data_type deleteFromList(LIST *, data_type);
 void printList(LIST);
 int lookupInList(LIST, data_type);
+int getLength(LIST);
 
 #endif
