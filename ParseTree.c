@@ -15,7 +15,22 @@ TREE * create_tree(tree_data_type x) {
 }
 
 int insert_to_leftmost_nonterminal(TREE t, LIST l) {
-    //stuff~
+    if (t->terminal == 0 && t->left == NULL) {
+        //leftmost non-terminal found!
+        return 1;
+    } else {
+        int flag = 0;
+        if (t->left != NULL) {
+            flag = insert_to_leftmost_nonterminal(t->left, l);
+        }
+        if (t->center != NULL && flag == 0) {
+            flag = insert_to_leftmost_nonterminal(t->center, l);
+        }
+        if (t->right != NULL && flag == 0) {
+            insert_to_leftmost_nonterminal(t-> center, l);
+        }
+        return 0;
+    }
 }
 
 int evaluate_tree(TREE t) {
