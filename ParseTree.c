@@ -65,7 +65,7 @@ void print_tree_helper(TREE t, char *buf, int level) {
 
         //append newline and the appropriate number of tabs
         strcat(buf, ")\n");
-        for (i=0; i<level; i++) strcat(buf, "\t");
+        if (t->center !=NULL || t->right !=NULL) for (i=0; i<level; i++) strcat(buf, "\t");
     }
     if (t->center != NULL) {
         strcat(buf, "(");
@@ -76,7 +76,7 @@ void print_tree_helper(TREE t, char *buf, int level) {
         strcat(buf, str);
         print_tree_helper(t->center, buf, level+1);
         strcat(buf, ")\n");
-        for (i=0; i<level; i++) strcat(buf, "\t");
+        if (t->right !=NULL) for (i=0; i<level; i++) strcat(buf, "\t");
     }
     if (t->right != NULL) {
         strcat(buf, "(");
@@ -87,7 +87,6 @@ void print_tree_helper(TREE t, char *buf, int level) {
         strcat(buf, str);
         print_tree_helper(t->right, buf, level+1);
         strcat(buf, ")\n");
-        for (i=0; i<level; i++) strcat(buf, "\t");
     }
 
 }
