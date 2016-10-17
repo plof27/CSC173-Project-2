@@ -1,6 +1,7 @@
 #ifndef LAW_PARSE_TREE
 #define LAW_PARSE_TREE
 
+#include <math.h>
 #include "helpers/LinkedList.h"
 
 //alias the data type of the tree as 'tree_data_type'

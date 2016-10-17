@@ -13,6 +13,11 @@ int main() {
     println(someOtherVar);
     */
 
+    char str[20];
+    float f = 4.446;
+    sprintf(str, "%.6f", f);
+    printf("%s\n", str);
+
     TREE parse_tree_test = *(create_tree("A"));
 
     LIST to_be_added = NULL;

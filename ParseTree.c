@@ -103,24 +103,42 @@ tree_data_type evaluate_tree(TREE t) {
 
 tree_data_type evaluate_node(tree_data_type left, tree_data_type center, tree_data_type right) {
 
-    if (left == "(") {
+    if (strcmp(left, "(") == 0) {
+        //trivial case, will only be called on (x)
         return center;
-    } else if (center == "+") {
-        int l = left - "0";
-        int r = right - "0";
-        return (char) l + r;
-    } else if (center == "-") {
-        int l = left - "0";
-        int r = right - "0";
-        return (char) l - r;
-    } else if (center == "*") {
-        int l = left - "0";
-        int r = right - "0";
-        return (char) l * r;
-    } else if (center == "/") {
-        int l = left - "0";
-        int r = right - "0";
-        return (char) l / r;
+    } else if (strcmp(center, "+") == 0) {
+        //read the operands to floats
+        float l = atof(left);
+        float r = atof(right);
+        //do the operation
+        l += r;
+        //create a string buffer large enough for the result
+        char buf[floor(log10(l)+1)+7];
+        //print the result to the buffer
+        sprintf(buf, "%.6f", l);
+        return buf;
+    } else if (strcmp(center, "-") == 0) {
+        float l = atof(left);
+        float r = atof(right);
+        l -= r;
+        char buf[floor(log10(l)+1)+7];
+        sprintf(buf, "%.6f", l);
+        return buf;
+    char buf[floor(log10(l)+1)+7];
+    } else if (strcmp(center, "*") == 0) {
+        float l = atof(left);
+        float r = atof(right);
+        l *= r;
+        char buf[floor(log10(l)+1)+7];
+        sprintf(buf, "%.6f", l);
+        return buf;
+    } else if (strcmp(center, "/") == 0) {
+        float l = atof(left);
+        float r = atof(right);
+        l /= r;
+        char buf[floor(log10(l)+1)+7];
+        sprintf(buf, "%.6f", l);
+        return buf;
     }
 }
 
