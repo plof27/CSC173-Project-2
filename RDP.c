@@ -46,6 +46,7 @@ void read_strings_from_file(char *filename, int eval) {
                     free_tree(t);
                 }
             }
+            printf("\n");
         }
         fclose(fp);
     }
@@ -62,6 +63,8 @@ TREE *parse_string(char *w) {
     } else {
         if (strcmp(look_ahead(w), "\0") != 0) {
             printf("Failed to reach end of input of %s. Returning partial parse tree.\n", bup);
+        } else {
+            printf("%s sucessfully parsed.\n", bup);
         }
         return &e;
     }
@@ -69,7 +72,7 @@ TREE *parse_string(char *w) {
 }
 
 TREE *E(char **w) {
-    printf("Parsing: E %s\n", *w);
+    //printf("Parsing: E %s\n", *w);
     //E has only 1 production, so this is easy
     TREE t = *(T(w));
     TREE s = *(S(w));
@@ -88,7 +91,7 @@ TREE *E(char **w) {
 }
 
 TREE *S(char **w) {
-    printf("Parsing: S %s\n", *w);
+    //printf("Parsing: S %s\n", *w);
     char *la = look_ahead(*w);
     if (strcmp(la, "+") == 0 || strcmp(la, "-") == 0) {
         //use AS production
@@ -113,7 +116,7 @@ TREE *S(char **w) {
 }
 
 TREE *A(char **w) {
-    printf("Parsing: A %s\n", *w);
+    //printf("Parsing: A %s\n", *w);
     char *la = consume_input(w);
     if (strcmp(la, "+") == 0) {
         //+ sucessfully matched
@@ -141,13 +144,14 @@ TREE *A(char **w) {
         }
     } else {
         //terminal was not matched (halt and reject)
+        printf("Error: expected +, - got %s\n", la);
         TREE a = NULL;
         return &a;
     }
 }
 
 TREE *T(char **w) {
-    printf("Parsing: T %s\n", *w);
+    //printf("Parsing: T %s\n", *w);
     TREE f = *(F(w));
     TREE p = *(P(w));
 
@@ -165,7 +169,7 @@ TREE *T(char **w) {
 }
 
 TREE *P(char **w) {
-    printf("Parsing: P %s\n", *w);
+    //printf("Parsing: P %s\n", *w);
     char *la = look_ahead(*w);
     if (strcmp(la, "*") == 0 || strcmp(la, "/") == 0) {
         //use GP production
@@ -190,7 +194,7 @@ TREE *P(char **w) {
 }
 
 TREE *G(char **w) {
-    printf("Parsing: G %s\n", *w);
+    //printf("Parsing: G %s\n", *w);
     char *la = consume_input(w);
     if (strcmp(la, "*") == 0) {
         //+ sucessfully matched
@@ -218,13 +222,14 @@ TREE *G(char **w) {
         }
     } else {
         //terminal was not matched (halt and reject)
+        printf("Error: expected *, / got %s\n", la);
         TREE g = NULL;
         return &g;
     }
 }
 
 TREE *F(char **w) {
-    printf("Parsing: F %s\n", *w);
+    //printf("Parsing: F %s\n", *w);
     char *la = look_ahead(*w);
     if (strcmp(la, "(") == 0) {
         //( matched, consume it (ignore return value of consume input)
@@ -246,6 +251,7 @@ TREE *F(char **w) {
             }
         } else {
             //failed to match ), halt and reject
+            printf("Error: expected ) got %s\n", la);
             TREE f = NULL;
             return &f;
         }
@@ -264,7 +270,7 @@ TREE *F(char **w) {
 }
 
 TREE *N(char **w) {
-    printf("Parsing: N %s\n", *w);
+    //printf("Parsing: N %s\n", *w);
     TREE d = *(D(w));
     TREE b = *(B(w));
 
@@ -282,7 +288,7 @@ TREE *N(char **w) {
 }
 
 TREE *B(char **w) {
-    printf("Parsing: B %s\n", *w);
+    //printf("Parsing: B %s\n", *w);
     char *la = look_ahead(*w);
 
     LIST digits = NULL;
@@ -318,7 +324,7 @@ TREE *B(char **w) {
 }
 
 TREE *D(char **w) {
-    printf("Parsing: D %s\n", *w);
+    //printf("Parsing: D %s\n", *w);
     char *la = consume_input(w);
 
     LIST digits = NULL;
@@ -354,6 +360,7 @@ TREE *D(char **w) {
         return &d;
     } else {
         //failed to match digit, halt and reject
+        printf("Error: expected 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 got %s\n", la);
         TREE d = NULL;
         return &d;
     }

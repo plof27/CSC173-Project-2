@@ -46,9 +46,6 @@ int main() {
     print_tree(parse_tree_test);
     */
 
-    TREE rdp_test = *(parse_string("2+2"));
-    if (rdp_test != NULL) print_tree(rdp_test);
-
     read_strings_from_file("somefile.txt", 0);
 
     return 0;
