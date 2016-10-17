@@ -344,9 +344,9 @@ tree_data_type evaluate_tree(TREE t) {
         t->right = NULL;
     }
 
-    //update the number of terminal and non-terminal children
-    num_terminal_children = 0;
-    num_non_terminal_children = 0;
+    //set the number of terminal and non-terminal children
+    int num_terminal_children = 0;
+    int num_non_terminal_children = 0;
 
     if (left != NULL) {
         if (left->terminal == 1) {
@@ -488,7 +488,7 @@ tree_data_type evaluate_node(tree_data_type left, tree_data_type center, tree_da
         //do the operation
         l += r;
         //create a string buffer large enough for the result
-        char buf[floor(log10(l)+1)+7];
+        char buf[(int) (floor(log10(l)+1)+7)];
         //print the result to the buffer
         sprintf(buf, "%.6f", l);
         return buf;
@@ -496,22 +496,21 @@ tree_data_type evaluate_node(tree_data_type left, tree_data_type center, tree_da
         float l = atof(left);
         float r = atof(right);
         l -= r;
-        char buf[floor(log10(l)+1)+7];
+        char buf[(int) (floor(log10(l)+1)+7)];
         sprintf(buf, "%.6f", l);
         return buf;
-    char buf[floor(log10(l)+1)+7];
     } else if (strcmp(center, "*") == 0) {
         float l = atof(left);
         float r = atof(right);
         l *= r;
-        char buf[floor(log10(l)+1)+7];
+        char buf[(int) (floor(log10(l)+1)+7)];
         sprintf(buf, "%.6f", l);
         return buf;
     } else if (strcmp(center, "/") == 0) {
         float l = atof(left);
         float r = atof(right);
         l /= r;
-        char buf[floor(log10(l)+1)+7];
+        char buf[(int) (floor(log10(l)+1)+7)];
         sprintf(buf, "%.6f", l);
         return buf;
     }
@@ -532,7 +531,8 @@ void free_tree(TREE t) {
 
 void print_tree(TREE t) {
     //create a string buffer to store the final tree string
-    char buf[100];      //fix later to make more general~
+    int n = count_tree_nodes(t);
+    char buf[(n*n)+(4*n)+1];
 
     //copy that string into the buffer and append a newline and a tab
     strcpy(buf, t->data);
@@ -591,4 +591,22 @@ void print_tree_helper(TREE t, char *buf, int level) {
         strcat(buf, ")");
     }
 
+}
+
+int count_tree_nodes(TREE t) {
+    if (t->left == NULL && t->center == NULL && t->right == NULL) {
+        return 1;
+    } else {
+        int retval = 1;
+        if (t->left != NULL) {
+            retval += count_tree_nodes(t->left);
+        }
+        if (t->center != NULL) {
+            retval += count_tree_nodes(t->center);
+        }
+        if (t->right != NULL) {
+            retval += count_tree_nodes(t->right);
+        }
+        return retval;
+    }
 }

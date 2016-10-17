@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ParseTree.h"
+#include "RDP.h"
 #include "helpers/GenPrint.h"
 
 int main() {
@@ -13,11 +14,7 @@ int main() {
     println(someOtherVar);
     */
 
-    char str[20];
-    float f = 4.446;
-    sprintf(str, "%.6f", f);
-    printf("%s\n", str);
-
+    /*ParseTree testing code
     TREE parse_tree_test = *(create_tree("A"));
 
     LIST to_be_added = NULL;
@@ -47,6 +44,9 @@ int main() {
     insert_to_leftmost_nonterminal(parse_tree_test, to_be_added);
 
     print_tree(parse_tree_test);
+    */
+
+    read_strings_from_file("test_expressions.txt", 0);
 
     return 0;
 }
