@@ -3,17 +3,17 @@
 #include "RDP.h"
 
 tree_data_type consume_input(char **w) {
-    char str[2];
-    strcpy(str, w[0]);
-    strcat(str, "\0");
-    w++;
+    char *str = malloc(sizeof(char)*2);
+    *str = **w;
+    *(str+1) = '\0';
+    (*w)++;
     return str;
 }
 
 tree_data_type look_ahead(char *w) {
-    char str[2];
-    strcpy(str, w[0]);
-    strcat(str, "\0");
+    char *str = malloc(sizeof(char)*2);
+    *str = *w;
+    *(str+1) = '\0';
     return str;
 }
 

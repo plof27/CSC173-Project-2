@@ -14,12 +14,6 @@ int main() {
     println(someOtherVar);
     */
 
-    char *w = "1234";
-    printf("%s\n", look_ahead(w));
-    printf("%s\n", w);
-    printf("%s\n", consume_input(&w));
-    printf("%s\n", w);
-
     TREE parse_tree_test = *(create_tree("A"));
 
     LIST to_be_added = NULL;
