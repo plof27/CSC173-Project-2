@@ -13,10 +13,11 @@ int main() {
     println(someOtherVar);
     */
 
-    char str[20];
-    float f = 4.446;
-    sprintf(str, "%.6f", f);
-    printf("%s\n", str);
+    char *w = "1234";
+    printf("%s\n", look_ahead(w));
+    printf("%s\n", w);
+    printf("%s\n", consume_input(&w));
+    printf("%s\n", w);
 
     TREE parse_tree_test = *(create_tree("A"));
 
