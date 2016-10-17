@@ -93,7 +93,16 @@ int evaluate_tree(TREE t) {
 }
 
 void free_tree(TREE t) {
-    //stuff~
+    if (t->left != NULL) {
+        free_tree(t->left);
+    }
+    if (t->center != NULL) {
+        free_tree(t->center);
+    }
+    if (t->right != NULL) {
+        free_tree(t->right);
+    }
+    free(t);
 }
 
 void print_tree(TREE t) {
