@@ -46,7 +46,7 @@ int main() {
     print_tree(parse_tree_test);
     */
 
-    read_strings_from_file("somefile.txt", 0);
+    read_strings_from_file("test_expressions.txt", 0);
 
     return 0;
 }

@@ -28,11 +28,11 @@ void read_strings_from_file(char *filename, int eval) {
         int len;
         //read lines from the file untill EOF is reached
         while (fgets(buf, 100, fp)) {
-            //remove the \n
+            //remove the \n (also ensure the last character is \0)
             int len = strlen(buf);
             char short_buf[len];
             strcpy(short_buf, buf);
-            short_buf[len-1] = '\0';
+            if (short_buf[len-1] !='\0') short_buf[len-1] = '\0';
 
             //do the things
             printf("Attempting to parse %s\n", short_buf);
@@ -144,7 +144,7 @@ TREE *A(char **w) {
         }
     } else {
         //terminal was not matched (halt and reject)
-        printf("Error: expected +, - got %s\n", la);
+        printf("Error: expected +, - got {%s}\n", la);
         TREE a = NULL;
         return &a;
     }
@@ -222,7 +222,7 @@ TREE *G(char **w) {
         }
     } else {
         //terminal was not matched (halt and reject)
-        printf("Error: expected *, / got %s\n", la);
+        printf("Error: expected *, / got {%s}\n", la);
         TREE g = NULL;
         return &g;
     }
@@ -251,7 +251,7 @@ TREE *F(char **w) {
             }
         } else {
             //failed to match ), halt and reject
-            printf("Error: expected ) got %s\n", la);
+            printf("Error: expected ) got {%s}\n", la);
             TREE f = NULL;
             return &f;
         }
@@ -292,20 +292,29 @@ TREE *B(char **w) {
     char *la = look_ahead(*w);
 
     LIST digits = NULL;
-    int i;
-    for (i = 0; i < 10; i++) {
-        char buf[2];
-        sprintf(buf, "%d", i);
-        insertToList(&digits, buf);
-    }
+    insertToList(&digits, "0");
+    insertToList(&digits, "1");
+    insertToList(&digits, "2");
+    insertToList(&digits, "3");
+    insertToList(&digits, "4");
+    insertToList(&digits, "5");
+    insertToList(&digits, "6");
+    insertToList(&digits, "7");
+    insertToList(&digits, "8");
+    insertToList(&digits, "9");
 
     int flag = lookupInList(digits, la);
 
-    for (i = 0; i < 10; i++) {
-        char buf[2];
-        sprintf(buf, "%d", i);
-        deleteFromList(&digits, buf);
-    }
+    deleteFromList(&digits, "0");
+    deleteFromList(&digits, "1");
+    deleteFromList(&digits, "2");
+    deleteFromList(&digits, "3");
+    deleteFromList(&digits, "4");
+    deleteFromList(&digits, "5");
+    deleteFromList(&digits, "6");
+    deleteFromList(&digits, "7");
+    deleteFromList(&digits, "8");
+    deleteFromList(&digits, "9");
     free(digits);
 
     if (flag == 1) {
@@ -360,7 +369,7 @@ TREE *D(char **w) {
         return &d;
     } else {
         //failed to match digit, halt and reject
-        printf("Error: expected 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 got %s\n", la);
+        printf("Error: expected 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 got {%s}\n", la);
         TREE d = NULL;
         return &d;
     }
