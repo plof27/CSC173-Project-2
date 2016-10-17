@@ -47,8 +47,9 @@ int main() {
     */
 
     TREE rdp_test = *(parse_string("2+2"));
-    printf("%s\n", "parse_string returned!");
     if (rdp_test != NULL) print_tree(rdp_test);
+
+    read_strings_from_file("somefile.txt");
 
     return 0;
 }

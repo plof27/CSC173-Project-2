@@ -17,8 +17,38 @@ tree_data_type look_ahead(char *w) {
     return str;
 }
 
-void read_strings_from_file(char *filename) {
-    //stuff~
+void read_strings_from_file(char *filename, int eval) {
+    FILE *fp;
+    fp = fopen(filename, "r");
+    if (fp == NULL) {
+        //file not found!
+        perror("Can't open file");
+    } else {
+        char buf[100];
+        int len;
+        //read lines from the file untill EOF is reached
+        while (fgets(buf, 100, fp)) {
+            //remove the \n
+            int len = strlen(buf);
+            char short_buf[len];
+            strcpy(short_buf, buf);
+            short_buf[len-1] = '\0';
+
+            //do the things
+            printf("Attempting to parse %s\n", short_buf);
+            TREE t = *(parse_string(short_buf));
+            if (t != NULL) {
+                printf("%s\n", "Printing parse tree...");
+                print_tree(t);
+                if (eval == 1) {
+                    evaluate_tree(t);
+                } else {
+                    free_tree(t);
+                }
+            }
+        }
+        fclose(fp);
+    }
 }
 
 TREE *parse_string(char *w) {
