@@ -46,7 +46,9 @@ int main() {
     print_tree(parse_tree_test);
     */
 
-    
+    TREE rdp_test = *(parse_string("2+2"));
+    printf("%s\n", "parse_string returned!");
+    if (rdp_test != NULL) print_tree(rdp_test);
 
     return 0;
 }

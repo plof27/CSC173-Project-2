@@ -21,79 +21,86 @@ void read_strings_from_file(char *filename) {
     //stuff~
 }
 
-TREE parse_string(char *w) {
+TREE *parse_string(char *w) {
     char *bup = w;
-    TREE e = E(w);
+    TREE e = *(E(&w));
 
-    if (e != NULL) {
+    if (e == NULL) {
         printf("Failed to parse %s\n", bup);
         return NULL;
     } else {
         if (strcmp(look_ahead(w), "\0") != 0) {
             printf("Failed to reach end of input of %s. Returning partial parse tree.\n", bup);
         }
-        return e;
+        return &e;
     }
 
 }
 
-TREE E(char *w) {
+TREE *E(char **w) {
+    printf("Parsing: E %s\n", *w);
     //E has only 1 production, so this is easy
-    TREE t = T(w);
-    TREE s = S(w);
+    TREE t = *(T(w));
+    TREE s = *(S(w));
 
     if (t != NULL && s != NULL) {
         //both T and S parsed successfully
         TREE e = *(create_tree("E"));
         e->left = t;
         e->center = s;
-        return e;
+        return &e;
     } else {
         //either T or S failed, so fail
         return NULL;
     }
 }
 
-TREE S(char *w) {
-    char *la = look_ahead(w);
+TREE *S(char **w) {
+    printf("Parsing: S %s\n", *w);
+    char *la = look_ahead(*w);
     if (strcmp(la, "+") == 0 || strcmp(la, "-") == 0) {
         //use AS production
-        TREE a = A(w);
-        TREE s = S(w);
+        TREE a = *(A(w));
+        TREE s = *(S(w));
 
         if(a != NULL && s != NULL) {
             TREE t = *(create_tree("S"));
             t->left = a;
             t->center = s;
-            return t;
+            return &t;
         } else {
             return NULL;
         }
     } else {
         //use empty production
-        return *(create_tree("e"));
+        TREE s = *(create_tree("S"));
+        s->left = *(create_tree("e"));
+        return &s;
     }
 }
 
-TREE A(char *w) {
-    char *la = consume_input(&w);
+TREE *A(char **w) {
+    printf("Parsing: A %s\n", *w);
+    char *la = consume_input(w);
     if (strcmp(la, "+") == 0) {
         //+ sucessfully matched
-        TREE t = T(w);
+        TREE t = *(T(w));
         if (t != NULL) {
             TREE a = *(create_tree("A"));
             a->left = *(create_tree("+"));
             a->center = t;
+            return &a;
         } else {
             return NULL;
         }
     } else if (strcmp(la, "-") == 0) {
         //- sucessfully matched
-        TREE t = T(w);
+        TREE t = *(T(w));
         if (t != NULL) {
             TREE a = *(create_tree("A"));
             a->left = *(create_tree("-"));
             a->center = t;
+            return &a;
         } else {
             return NULL;
         }
@@ -103,62 +110,69 @@ TREE A(char *w) {
     }
 }
 
-TREE T(char *w) {
-    TREE f = F(w);
-    TREE p = P(w);
+TREE *T(char **w) {
+    printf("Parsing: T %s\n", *w);
+    TREE f = *(F(w));
+    TREE p = *(P(w));
 
     if (f != NULL && p != NULL) {
         //both T and S parsed successfully
         TREE e = *(create_tree("T"));
         e->left = f;
         e->center = p;
-        return e;
+        return &e;
     } else {
         //either T or S failed, so fail
         return NULL;
     }
 }
 
-TREE P(char *w) {
-    char *la = look_ahead(w);
+TREE *P(char **w) {
+    printf("Parsing: P %s\n", *w);
+    char *la = look_ahead(*w);
     if (strcmp(la, "*") == 0 || strcmp(la, "/") == 0) {
         //use GP production
-        TREE g = G(w);
-        TREE p = P(w);
+        TREE g = *(G(w));
+        TREE p = *(P(w));
 
-        if(a != NULL && s != NULL) {
+        if(g != NULL && p != NULL) {
             TREE t = *(create_tree("P"));
             t->left = g;
             t->center = p;
-            return t;
+            return &t;
         } else {
             return NULL;
         }
     } else {
         //use empty production
-        return *(create_tree("e"));
+        TREE p = *(create_tree("P"));
+        p->left = *(create_tree("e"));
+        return &p;
     }
 }
 
-TREE G(char *w) {
-    char *la = consume_input(&w);
+TREE *G(char **w) {
+    printf("Parsing: G %s\n", *w);
+    char *la = consume_input(w);
     if (strcmp(la, "*") == 0) {
         //+ sucessfully matched
-        TREE f = F(w);
+        TREE f = *(F(w));
         if (f != NULL) {
             TREE g = *(create_tree("G"));
             g->left = *(create_tree("*"));
             g->center = f;
+            return &g;
         } else {
             return NULL;
         }
     } else if (strcmp(la, "/") == 0) {
         //- sucessfully matched
-        TREE f = F(w);
+        TREE f = *(F(w));
         if (f != NULL) {
             TREE g = *(create_tree("G"));
             g->left = *(create_tree("/"));
             g->center = f;
+            return &g;
         } else {
             return NULL;
         }
@@ -168,13 +182,14 @@ TREE G(char *w) {
     }
 }
 
-TREE F(char *w) {
-    char *la = look_ahead(w);
+TREE *F(char **w) {
+    printf("Parsing: F %s\n", *w);
+    char *la = look_ahead(*w);
     if (strcmp(la, "(") == 0) {
         //( matched, consume it (ignore return value of consume input)
-        consume_input(&w);
-        TREE e = E(w);
-        la = consume_input(&w);
+        consume_input(w);
+        TREE e = *(E(w));
+        la = consume_input(w);
         //attempt to match )
         if (strcmp(la, ")") == 0) {
             //sucess!
@@ -183,7 +198,7 @@ TREE F(char *w) {
                 f->left = *(create_tree("("));
                 f->center = e;
                 f->right = *(create_tree(")"));
-                return f;
+                return &f;
             } else {
                 return NULL;
             }
@@ -193,38 +208,41 @@ TREE F(char *w) {
         }
     } else {
         //take N production
-        TREE n = N(w);
+        TREE n = *(N(w));
         if (n != NULL) {
             TREE f = *(create_tree("F"));
             f->left = n;
-            return f;
+            return &f;
         } else {
             return NULL;
         }
     }
 }
 
-TREE N(char *w) {
-    TREE d = D(w);
-    TREE b = B(w);
+TREE *N(char **w) {
+    printf("Parsing: N %s\n", *w);
+    TREE d = *(D(w));
+    TREE b = *(B(w));
 
     if (d != NULL && b != NULL) {
         //both T and S parsed successfully
         TREE n = *(create_tree("N"));
         n->left = d;
         n->center = b;
-        return n;
+        return &n;
     } else {
+        printf("%s\n", "N");
         //either T or S failed, so fail
-        return NULL;
     }
 }
 
-TREE B(char *w) {
-    char *la = look_ahead(w);
+TREE *B(char **w) {
+    printf("Parsing: B %s\n", *w);
+    char *la = look_ahead(*w);
 
     LIST digits = NULL;
-    for (size_t i = 0; i < 10; i++) {
+    int i;
+    for (i = 0; i < 10; i++) {
         char buf[2];
         sprintf(buf, "%d", i);
         insertToList(&digits, buf);
@@ -232,7 +250,7 @@ TREE B(char *w) {
 
     int flag = lookupInList(digits, la);
 
-    for (size_t i = 0; i < 10; i++) {
+    for (i = 0; i < 10; i++) {
         char buf[2];
         sprintf(buf, "%d", i);
         deleteFromList(&digits, buf);
@@ -241,44 +259,54 @@ TREE B(char *w) {
 
     if (flag == 1) {
         //take N e production
-        TREE n = N(w);
+        TREE n = *(N(w));
         TREE b = *(create_tree("B"));
         b->left = n;
-        return b;
+        return &b;
     } else {
         //take e production
         TREE b = *(create_tree("B"));
         b->left = *(create_tree("e"));
-        return b;
+        return &b;
     }
 
 }
 
-TREE D(char *w) {
+TREE *D(char **w) {
+    printf("Parsing: D %s\n", *w);
     char *la = consume_input(w);
 
     LIST digits = NULL;
-    for (size_t i = 0; i < 10; i++) {
-        char buf[2];
-        sprintf(buf, "%d", i);
-        insertToList(&digits, buf);
-    }
+    insertToList(&digits, "0");
+    insertToList(&digits, "1");
+    insertToList(&digits, "2");
+    insertToList(&digits, "3");
+    insertToList(&digits, "4");
+    insertToList(&digits, "5");
+    insertToList(&digits, "6");
+    insertToList(&digits, "7");
+    insertToList(&digits, "8");
+    insertToList(&digits, "9");
 
     int flag = lookupInList(digits, la);
 
-    for (size_t i = 0; i < 10; i++) {
-        char buf[2];
-        sprintf(buf, "%d", i);
-        deleteFromList(&digits, buf);
-    }
+    deleteFromList(&digits, "0");
+    deleteFromList(&digits, "1");
+    deleteFromList(&digits, "2");
+    deleteFromList(&digits, "3");
+    deleteFromList(&digits, "4");
+    deleteFromList(&digits, "5");
+    deleteFromList(&digits, "6");
+    deleteFromList(&digits, "7");
+    deleteFromList(&digits, "8");
+    deleteFromList(&digits, "9");
     free(digits);
 
     if (flag == 1) {
         //digit matched and consumed!
         TREE d = *(create_tree("D"));
-        char buf[2];
-        sprintf(buf, "%d", i);
-        d->left = *(create_tree(buf));
+        d->left = *(create_tree(la));
+        return &d;
     } else {
         //failed to match digit, halt and reject
         return NULL;
