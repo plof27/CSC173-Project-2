@@ -14,6 +14,7 @@ int main() {
     println(someOtherVar);
     */
 
+    /*ParseTree testing code
     TREE parse_tree_test = *(create_tree("A"));
 
     LIST to_be_added = NULL;
@@ -43,6 +44,9 @@ int main() {
     insert_to_leftmost_nonterminal(parse_tree_test, to_be_added);
 
     print_tree(parse_tree_test);
+    */
+
+    
 
     return 0;
 }

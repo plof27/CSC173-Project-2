@@ -22,7 +22,19 @@ void read_strings_from_file(char *filename) {
 }
 
 TREE parse_string(char *w) {
-    //stuff~
+    char *bup = w;
+    TREE e = E(w);
+
+    if (e != NULL) {
+        printf("Failed to parse %s\n", bup);
+        return NULL;
+    } else {
+        if (strcmp(look_ahead(w), "\0") != 0) {
+            printf("Failed to reach end of input of %s. Returning partial parse tree.\n", bup);
+        }
+        return e;
+    }
+
 }
 
 TREE E(char *w) {
