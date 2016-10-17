@@ -28,5 +28,6 @@ tree_data_type evaluate_node(tree_data_type, tree_data_type, tree_data_type);   
 void free_tree(TREE);                                   //frees all the trees nodes from memory
 void print_tree(TREE);                                  //prints the tree all nicely
 void print_tree_helper(TREE, char*, int);               //helper function to print_tree, this is what actually does the recursion
+int count_tree_nodes(TREE);                             //counts the number of nodes in the tree
 
 #endif
