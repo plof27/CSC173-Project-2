@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "ParseTree.h"
 
-TREE * create_tree(tree_data_type x) {
+TREE *create_tree(tree_data_type x) {
     LIST terminals = NULL;
     insertToList(&terminals, '+');
     insertToList(&terminals, '-');
@@ -10,19 +10,20 @@ TREE * create_tree(tree_data_type x) {
     insertToList(&terminals, '/');
     insertToList(&terminals, '(');
     insertToList(&terminals, ')');
+    insertToList(&terminals, 'e');
     int i;
     for (i=48; i<58; i++) {
         char c = (char) i;
         insertToList(&terminals, c);
     }
 
-    TREE *pT = (TREE *) malloc(sizeof(TREE));
-    (*pT)->data = x;
-    (*pT)->terminal = lookupInList(terminals, x);
+    TREE t = (TREE) malloc(sizeof(TNode));
+    t->terminal = lookupInList(terminals, x);
+    t->data = x;
 
-    (*pT)->left = NULL;
-    (*pT)->center = NULL;
-    (*pT)->right = NULL;
+    t->left = NULL;
+    t->center = NULL;
+    t->right = NULL;
 
     deleteFromList(&terminals, '+');
     deleteFromList(&terminals, '-');
@@ -30,12 +31,13 @@ TREE * create_tree(tree_data_type x) {
     deleteFromList(&terminals, '/');
     deleteFromList(&terminals, '(');
     deleteFromList(&terminals, ')');
+    deleteFromList(&terminals, 'e');
     for (i=48; i<58; i++) {
         char c = (char) i;
         deleteFromList(&terminals, c);
     }
 
-    return pT;
+    return &t;
 }
 
 int insert_to_leftmost_nonterminal(TREE t, LIST l) {
@@ -80,7 +82,7 @@ int insert_to_leftmost_nonterminal(TREE t, LIST l) {
             flag = insert_to_leftmost_nonterminal(t->center, l);
         }
         if (t->right != NULL && flag == 0) {
-            insert_to_leftmost_nonterminal(t-> center, l);
+            insert_to_leftmost_nonterminal(t->right, l);
         }
         return 0;
     }
@@ -105,7 +107,8 @@ void print_tree(TREE t) {
 
     //copy that string into the buffer and append a newline and a tab
     strcpy(buf, str);
-    strcat(buf, "(\n\t");
+    strcat(buf, "(");
+    if (t->left != NULL) strcat(buf, "\n");
 
     //do the recursive stuff to build the middle of the string (all non-root nodes)
     print_tree_helper(t, buf, 1);
@@ -119,6 +122,9 @@ void print_tree_helper(TREE t, char *buf, int level) {
     int i;
     if (t->left != NULL) {
         //Im not gonna comment the next two blocks; assume without loss of generality
+
+        //append an appropriate number of tabs and the (
+        for (i=0; i<level; i++) strcat(buf, "\t");
         strcat(buf, "(");
 
         //create the a string from the left child's data and append it
@@ -127,34 +133,43 @@ void print_tree_helper(TREE t, char *buf, int level) {
         str[0] = tmp->data;
         str[1] = '\0';
         strcat(buf, str);
+        if (tmp->left != NULL) strcat(buf, "\n");
 
         //recurse for children
         print_tree_helper(t->left, buf, level+1);
 
-        //append newline and the appropriate number of tabs
-        strcat(buf, ")\n");
-        if (t->center !=NULL || t->right !=NULL) for (i=0; i<level; i++) strcat(buf, "\t");
+        //append ) and the newline if appropriate
+        strcat(buf, ")");
+        if (t->center != NULL || t->right != NULL) {
+            strcat(buf, "\n");
+        }
     }
     if (t->center != NULL) {
+        for (i=0; i<level; i++) strcat(buf, "\t");
         strcat(buf, "(");
         char str[2];
         TREE tmp = t->center;
         str[0] = tmp->data;
         str[1] = '\0';
         strcat(buf, str);
+        if (tmp->left != NULL) strcat(buf, "\n");
         print_tree_helper(t->center, buf, level+1);
-        strcat(buf, ")\n");
-        if (t->right !=NULL) for (i=0; i<level; i++) strcat(buf, "\t");
+        strcat(buf, ")");
+        if (t->right != NULL) {
+            strcat(buf, "\n");
+        }
     }
     if (t->right != NULL) {
+        for (i=0; i<level; i++) strcat(buf, "\t");
         strcat(buf, "(");
         char str[2];
         TREE tmp = t->right;
         str[0] = tmp->data;
         str[1] = '\0';
         strcat(buf, str);
+        if (tmp->left != NULL) strcat(buf, "\n");
         print_tree_helper(t->right, buf, level+1);
-        strcat(buf, ")\n");
+        strcat(buf, ")");
     }
 
 }
