@@ -4,12 +4,14 @@
 void insertToList(LIST *pL, data_type x) {
       if ((*pL)==NULL) {
             (*pL) = (struct Node *) malloc(sizeof(struct Node));
+            (*pL)->data = malloc(strlen(x));
             (*pL)->data = x;
             (*pL)->next = NULL;
 
       } else {
             struct Node *currentHead = (*pL);
             (*pL) = (struct Node *) malloc(sizeof(struct Node));
+            (*pL)->data = malloc(strlen(x));
             (*pL)->data = x;
             (*pL)->next = currentHead;
       }
@@ -18,7 +20,7 @@ void insertToList(LIST *pL, data_type x) {
 //deletes the item x from the list
 data_type deleteFromList(LIST *pL, data_type x) {
       if ((*pL) != NULL) {
-            if ((*pL)->data == x) {
+            if (strcmp((*pL)->data, x) == 0) {
                   //item found! do the things!
                   struct Node *deletedNode = (*pL);
                   data_type deletedVal = deletedNode->data;
@@ -38,7 +40,7 @@ data_type deleteFromList(LIST *pL, data_type x) {
 //prints a list in order
 void printList(LIST l) {
       //print(l->data);
-      printf("%c\n", l->data);
+      printf(l->data);
       printf(" ");
       if (l->next != NULL) {
             printList(l->next);
@@ -50,7 +52,7 @@ void printList(LIST l) {
 //finds whether an element is a member of the list
 int lookupInList(LIST l, data_type x) {
       if (l != NULL) {
-            if (l->data == x) {
+            if (strcmp(l->data, x) == 0) {
                   //item found!
                   return 1;
             } else {

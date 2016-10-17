@@ -6,7 +6,7 @@
 //alias the data type of the tree as 'tree_data_type'
 //this way, if we want our tree to store something other than chars it is easy to change
 //this is as close to generics as we can get
-typedef char tree_data_type;
+typedef char *tree_data_type;
 
 typedef struct {
     tree_data_type data;
@@ -22,7 +22,8 @@ typedef TNode * TREE;
 //fcn prototypes
 TREE * create_tree(tree_data_type);                     //creates a tree with root element tree_data_type and returns a pointer to that tree
 int insert_to_leftmost_nonterminal(TREE, LIST);         //adds the data in the list to the tree at the leftmost non-terminal element
-int evaluate_tree(TREE);                                //evaluates the tree and frees all nodes from memory
+tree_data_type evaluate_tree(TREE);                     //evaluates the tree and frees all nodes from memory
+tree_data_type evaluate_node(tree_data_type, tree_data_type, tree_data_type);                     //takes a node with three terminal children and returns the evaluation of those children
 void free_tree(TREE);                                   //frees all the trees nodes from memory
 void print_tree(TREE);                                  //prints the tree all nicely
 void print_tree_helper(TREE, char*, int);               //helper function to print_tree, this is what actually does the recursion

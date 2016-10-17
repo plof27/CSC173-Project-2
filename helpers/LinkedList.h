@@ -3,12 +3,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "GenPrint.h"
 
 //define some stuffs
 struct Node;
 typedef struct Node * LIST;
-typedef char data_type;
+typedef char *data_type;
 struct Node {
       data_type data;
       struct Node *next;

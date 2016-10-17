@@ -4,18 +4,22 @@
 
 TREE *create_tree(tree_data_type x) {
     LIST terminals = NULL;
-    insertToList(&terminals, '+');
-    insertToList(&terminals, '-');
-    insertToList(&terminals, '*');
-    insertToList(&terminals, '/');
-    insertToList(&terminals, '(');
-    insertToList(&terminals, ')');
-    insertToList(&terminals, 'e');
-    int i;
-    for (i=48; i<58; i++) {
-        char c = (char) i;
-        insertToList(&terminals, c);
-    }
+    insertToList(&terminals, "+");
+    insertToList(&terminals, "-");
+    insertToList(&terminals, "*");
+    insertToList(&terminals, "/");
+    insertToList(&terminals, "(");
+    insertToList(&terminals, ")");
+    insertToList(&terminals, "0");
+    insertToList(&terminals, "1");
+    insertToList(&terminals, "2");
+    insertToList(&terminals, "3");
+    insertToList(&terminals, "4");
+    insertToList(&terminals, "5");
+    insertToList(&terminals, "6");
+    insertToList(&terminals, "7");
+    insertToList(&terminals, "8");
+    insertToList(&terminals, "9");
 
     TREE t = (TREE) malloc(sizeof(TNode));
     t->terminal = lookupInList(terminals, x);
@@ -25,17 +29,23 @@ TREE *create_tree(tree_data_type x) {
     t->center = NULL;
     t->right = NULL;
 
-    deleteFromList(&terminals, '+');
-    deleteFromList(&terminals, '-');
-    deleteFromList(&terminals, '*');
-    deleteFromList(&terminals, '/');
-    deleteFromList(&terminals, '(');
-    deleteFromList(&terminals, ')');
-    deleteFromList(&terminals, 'e');
-    for (i=48; i<58; i++) {
-        char c = (char) i;
-        deleteFromList(&terminals, c);
-    }
+    deleteFromList(&terminals, "+");
+    deleteFromList(&terminals, "-");
+    deleteFromList(&terminals, "*");
+    deleteFromList(&terminals, "/");
+    deleteFromList(&terminals, "(");
+    deleteFromList(&terminals, ")");
+    deleteFromList(&terminals, "e");
+    deleteFromList(&terminals, "0");
+    deleteFromList(&terminals, "1");
+    deleteFromList(&terminals, "2");
+    deleteFromList(&terminals, "3");
+    deleteFromList(&terminals, "4");
+    deleteFromList(&terminals, "5");
+    deleteFromList(&terminals, "6");
+    deleteFromList(&terminals, "7");
+    deleteFromList(&terminals, "8");
+    deleteFromList(&terminals, "9");
 
     return &t;
 }
@@ -88,8 +98,30 @@ int insert_to_leftmost_nonterminal(TREE t, LIST l) {
     }
 }
 
-int evaluate_tree(TREE t) {
-    //stuff~
+tree_data_type evaluate_tree(TREE t) {
+}
+
+tree_data_type evaluate_node(tree_data_type left, tree_data_type center, tree_data_type right) {
+
+    if (left == "(") {
+        return center;
+    } else if (center == "+") {
+        int l = left - "0";
+        int r = right - "0";
+        return (char) l + r;
+    } else if (center == "-") {
+        int l = left - "0";
+        int r = right - "0";
+        return (char) l - r;
+    } else if (center == "*") {
+        int l = left - "0";
+        int r = right - "0";
+        return (char) l * r;
+    } else if (center == "/") {
+        int l = left - "0";
+        int r = right - "0";
+        return (char) l / r;
+    }
 }
 
 void free_tree(TREE t) {
@@ -109,13 +141,8 @@ void print_tree(TREE t) {
     //create a string buffer to store the final tree string
     char buf[100];      //fix later to make more general~
 
-    //create a string which contains only the root data
-    char str[2];
-    str[0] = t->data;
-    str[1] = '\0';
-
     //copy that string into the buffer and append a newline and a tab
-    strcpy(buf, str);
+    strcpy(buf, t->data);
     strcat(buf, "(");
     if (t->left != NULL) strcat(buf, "\n");
 
@@ -136,12 +163,8 @@ void print_tree_helper(TREE t, char *buf, int level) {
         for (i=0; i<level; i++) strcat(buf, "\t");
         strcat(buf, "(");
 
-        //create the a string from the left child's data and append it
-        char str[2];
         TREE tmp = t->left;     //need to do this because gcc is a silly, silly compiler and doing it inline caused undefined behavior
-        str[0] = tmp->data;
-        str[1] = '\0';
-        strcat(buf, str);
+        strcat(buf, tmp->data);
         if (tmp->left != NULL) strcat(buf, "\n");
 
         //recurse for children
@@ -156,11 +179,8 @@ void print_tree_helper(TREE t, char *buf, int level) {
     if (t->center != NULL) {
         for (i=0; i<level; i++) strcat(buf, "\t");
         strcat(buf, "(");
-        char str[2];
         TREE tmp = t->center;
-        str[0] = tmp->data;
-        str[1] = '\0';
-        strcat(buf, str);
+        strcat(buf, tmp->data);
         if (tmp->left != NULL) strcat(buf, "\n");
         print_tree_helper(t->center, buf, level+1);
         strcat(buf, ")");
@@ -171,11 +191,8 @@ void print_tree_helper(TREE t, char *buf, int level) {
     if (t->right != NULL) {
         for (i=0; i<level; i++) strcat(buf, "\t");
         strcat(buf, "(");
-        char str[2];
         TREE tmp = t->right;
-        str[0] = tmp->data;
-        str[1] = '\0';
-        strcat(buf, str);
+        strcat(buf, tmp->data);
         if (tmp->left != NULL) strcat(buf, "\n");
         print_tree_helper(t->right, buf, level+1);
         strcat(buf, ")");
