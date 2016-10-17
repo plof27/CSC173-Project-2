@@ -344,9 +344,9 @@ tree_data_type evaluate_tree(TREE t) {
         t->right = NULL;
     }
 
-    //update the number of terminal and non-terminal children
-    num_terminal_children = 0;
-    num_non_terminal_children = 0;
+    //set the number of terminal and non-terminal children
+    int num_terminal_children = 0;
+    int num_non_terminal_children = 0;
 
     if (left != NULL) {
         if (left->terminal == 1) {
@@ -488,7 +488,7 @@ tree_data_type evaluate_node(tree_data_type left, tree_data_type center, tree_da
         //do the operation
         l += r;
         //create a string buffer large enough for the result
-        char buf[floor(log10(l)+1)+7];
+        char buf[(int) (floor(log10(l)+1)+7)];
         //print the result to the buffer
         sprintf(buf, "%.6f", l);
         return buf;
@@ -496,22 +496,21 @@ tree_data_type evaluate_node(tree_data_type left, tree_data_type center, tree_da
         float l = atof(left);
         float r = atof(right);
         l -= r;
-        char buf[floor(log10(l)+1)+7];
+        char buf[(int) (floor(log10(l)+1)+7)];
         sprintf(buf, "%.6f", l);
         return buf;
-    char buf[floor(log10(l)+1)+7];
     } else if (strcmp(center, "*") == 0) {
         float l = atof(left);
         float r = atof(right);
         l *= r;
-        char buf[floor(log10(l)+1)+7];
+        char buf[(int) (floor(log10(l)+1)+7)];
         sprintf(buf, "%.6f", l);
         return buf;
     } else if (strcmp(center, "/") == 0) {
         float l = atof(left);
         float r = atof(right);
         l /= r;
-        char buf[floor(log10(l)+1)+7];
+        char buf[(int) (floor(log10(l)+1)+7)];
         sprintf(buf, "%.6f", l);
         return buf;
     }
