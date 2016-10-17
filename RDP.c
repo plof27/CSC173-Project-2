@@ -57,7 +57,8 @@ TREE *parse_string(char *w) {
 
     if (e == NULL) {
         printf("Failed to parse %s\n", bup);
-        return NULL;
+        TREE e = NULL;
+        return &e;
     } else {
         if (strcmp(look_ahead(w), "\0") != 0) {
             printf("Failed to reach end of input of %s. Returning partial parse tree.\n", bup);
@@ -81,7 +82,8 @@ TREE *E(char **w) {
         return &e;
     } else {
         //either T or S failed, so fail
-        return NULL;
+        TREE e = NULL;
+        return &e;
     }
 }
 
@@ -99,7 +101,8 @@ TREE *S(char **w) {
             t->center = s;
             return &t;
         } else {
-            return NULL;
+            TREE s = NULL;
+            return &s;
         }
     } else {
         //use empty production
@@ -121,7 +124,8 @@ TREE *A(char **w) {
             a->center = t;
             return &a;
         } else {
-            return NULL;
+            TREE a = NULL;
+            return &a;
         }
     } else if (strcmp(la, "-") == 0) {
         //- sucessfully matched
@@ -132,11 +136,13 @@ TREE *A(char **w) {
             a->center = t;
             return &a;
         } else {
-            return NULL;
+            TREE a = NULL;
+            return &a;
         }
     } else {
         //terminal was not matched (halt and reject)
-        return NULL;
+        TREE a = NULL;
+        return &a;
     }
 }
 
@@ -153,7 +159,8 @@ TREE *T(char **w) {
         return &e;
     } else {
         //either T or S failed, so fail
-        return NULL;
+        TREE t = NULL;
+        return &t;
     }
 }
 
@@ -171,7 +178,8 @@ TREE *P(char **w) {
             t->center = p;
             return &t;
         } else {
-            return NULL;
+            TREE p = NULL;
+            return &p;
         }
     } else {
         //use empty production
@@ -193,7 +201,8 @@ TREE *G(char **w) {
             g->center = f;
             return &g;
         } else {
-            return NULL;
+            TREE g = NULL;
+            return &g;
         }
     } else if (strcmp(la, "/") == 0) {
         //- sucessfully matched
@@ -204,11 +213,13 @@ TREE *G(char **w) {
             g->center = f;
             return &g;
         } else {
-            return NULL;
+            TREE g = NULL;
+            return &g;
         }
     } else {
         //terminal was not matched (halt and reject)
-        return NULL;
+        TREE g = NULL;
+        return &g;
     }
 }
 
@@ -230,11 +241,13 @@ TREE *F(char **w) {
                 f->right = *(create_tree(")"));
                 return &f;
             } else {
-                return NULL;
+                TREE f = NULL;
+                return &f;
             }
         } else {
             //failed to match ), halt and reject
-            return NULL;
+            TREE f = NULL;
+            return &f;
         }
     } else {
         //take N production
@@ -244,7 +257,8 @@ TREE *F(char **w) {
             f->left = n;
             return &f;
         } else {
-            return NULL;
+            TREE f = NULL;
+            return &f;
         }
     }
 }
@@ -261,8 +275,9 @@ TREE *N(char **w) {
         n->center = b;
         return &n;
     } else {
-        printf("%s\n", "N");
         //either T or S failed, so fail
+        TREE n = NULL;
+        return &n;
     }
 }
 
@@ -339,7 +354,8 @@ TREE *D(char **w) {
         return &d;
     } else {
         //failed to match digit, halt and reject
-        return NULL;
+        TREE d = NULL;
+        return &d;
     }
 
 }
