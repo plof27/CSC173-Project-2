@@ -35,13 +35,14 @@ void read_strings_from_file(char *filename, int eval) {
             if (short_buf[len-1] !='\0') short_buf[len-1] = '\0';
 
             //do the things
-            printf("Attempting to parse %s\n", short_buf);
+            printf("Attempting to parse \"%s\"\n", short_buf);
             TREE t = *(parse_string(short_buf));
             if (t != NULL) {
                 printf("%s\n", "Printing parse tree...");
                 print_tree(t);
                 if (eval == 1) {
-                    evaluate_tree(t);
+                    printf("Attempting to evaluate \"%s\"\n", short_buf);
+                    printf("%s = %s\n", short_buf, evaluate_tree(t));
                 } else {
                     free_tree(t);
                 }
@@ -57,14 +58,14 @@ TREE *parse_string(char *w) {
     TREE e = *(E(&w));
 
     if (e == NULL) {
-        printf("Failed to parse %s\n", bup);
+        printf("Failed to parse \"%s\"\n", bup);
         TREE e = NULL;
         return &e;
     } else {
         if (strcmp(look_ahead(w), "\0") != 0) {
-            printf("Failed to reach end of input of %s. Returning partial parse tree.\n", bup);
+            printf("Failed to reach end of input of \"%s\". Returning partial parse tree.\n", bup);
         } else {
-            printf("%s sucessfully parsed.\n", bup);
+            printf("\"%s\" successfully parsed.\n", bup);
         }
         return &e;
     }

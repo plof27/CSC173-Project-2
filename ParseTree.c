@@ -417,7 +417,7 @@ tree_data_type evaluate_tree(TREE t) {
             TREE centerleft = center->left;
             TREE centercenter = center->center;
 
-            center->data = evaluate_node(leftcenter->data, centerleft->data, centercenter->data);
+            center->data = *(evaluate_node(leftcenter->data, centerleft->data, centercenter->data));
             left->data = leftleft->data;
 
             left->terminal = 1;
@@ -432,7 +432,7 @@ tree_data_type evaluate_tree(TREE t) {
             TREE centerleft = center->left;
             TREE centercenter = center->center;
 
-            t->data = evaluate_node(left->data, centerleft->data, centercenter->data);
+            t->data = *(evaluate_node(left->data, centerleft->data, centercenter->data));
             t->terminal = 1;
 
             free(centerleft);
@@ -463,7 +463,7 @@ tree_data_type evaluate_tree(TREE t) {
             }
         } else {
             //three terminal children, this means we have an expression to evaluate
-            t->data = evaluate_node(left->data, center->data, right->data);
+            t->data = *(evaluate_node(left->data, center->data, right->data));
             t->terminal = 1;
             free(left);
             free(center);
@@ -476,11 +476,11 @@ tree_data_type evaluate_tree(TREE t) {
 
 }
 
-tree_data_type evaluate_node(tree_data_type left, tree_data_type center, tree_data_type right) {
+tree_data_type *evaluate_node(tree_data_type left, tree_data_type center, tree_data_type right) {
 
     if (strcmp(left, "(") == 0) {
         //trivial case, will only be called on (x)
-        return center;
+        return &center;
     } else if (strcmp(center, "+") == 0) {
         //read the operands to floats
         float l = atof(left);
@@ -488,31 +488,31 @@ tree_data_type evaluate_node(tree_data_type left, tree_data_type center, tree_da
         //do the operation
         l += r;
         //create a string buffer large enough for the result
-        char buf[(int) (floor(log10(l)+1)+7)];
+        char *buf = malloc(sizeof(char) * ((int) (floor(log10(l)+1)+7)));
         //print the result to the buffer
         sprintf(buf, "%.6f", l);
-        return buf;
+        return &buf;
     } else if (strcmp(center, "-") == 0) {
         float l = atof(left);
         float r = atof(right);
         l -= r;
-        char buf[(int) (floor(log10(l)+1)+7)];
+        char *buf = malloc(sizeof(char) * ((int) (floor(log10(l)+1)+7)));
         sprintf(buf, "%.6f", l);
-        return buf;
+        return &buf;
     } else if (strcmp(center, "*") == 0) {
         float l = atof(left);
         float r = atof(right);
         l *= r;
-        char buf[(int) (floor(log10(l)+1)+7)];
+        char *buf = malloc(sizeof(char) * ((int) (floor(log10(l)+1)+7)));
         sprintf(buf, "%.6f", l);
-        return buf;
+        return &buf;
     } else if (strcmp(center, "/") == 0) {
         float l = atof(left);
         float r = atof(right);
         l /= r;
-        char buf[(int) (floor(log10(l)+1)+7)];
+        char *buf = malloc(sizeof(char) * ((int) (floor(log10(l)+1)+7)));
         sprintf(buf, "%.6f", l);
-        return buf;
+        return &buf;
     }
 }
 
