@@ -20,6 +20,7 @@ TREE *create_tree(tree_data_type x) {
     insertToList(&terminals, "7");
     insertToList(&terminals, "8");
     insertToList(&terminals, "9");
+    insertToList(&terminals, "e");
 
     TREE t = (TREE) malloc(sizeof(TNode));
     t->terminal = lookupInList(terminals, x);
@@ -46,6 +47,7 @@ TREE *create_tree(tree_data_type x) {
     deleteFromList(&terminals, "7");
     deleteFromList(&terminals, "8");
     deleteFromList(&terminals, "9");
+    deleteFromList(&terminals, "e");
 
     return &t;
 }
@@ -320,29 +322,53 @@ tree_data_type evaluate_tree(TREE t) {
 */
 
 tree_data_type evaluate_tree(TREE t) {
+    evaluate_tree_helper(t);
+    return t->data;
+}
+
+void evaluate_tree_helper(TREE t) {
+    //printf("%s\n", t->data);
     TREE left = t->left;
     TREE center = t->center;
     TREE right = t->right;
 
     //some of the children may be non terminals. This must be fixed.
     //first, recurse down on each non-terminal child
-    if (left->terminal == 0) evaluate_tree(left);
-    if (center->terminal == 0) evaluate_tree(center);
-    if (right->terminal == 0) evaluate_tree(right);
+    if (left != NULL && left->terminal == 0) evaluate_tree(left);
+    if (center != NULL && center->terminal == 0) evaluate_tree(center);
+    if (right  != NULL && right->terminal == 0) evaluate_tree(right);
+    /*
+    printf("%s's children cleaned \n", t->data);
+    printf("%s\n", "Left:");
+    print_tree(left);
+    printf("%s\n", "Center:");
+    print_tree(center);
+    printf("%s\n", "Right:");
+    print_tree(right);
+    */
 
     //remove any children which contain the empty string (not relevant for evaluation)
-    if (strcmp(left->data, "e") == 0) {
+    if (left != NULL && strcmp(left->data, "e") == 0) {
         free(left);
         t->left = NULL;
     }
-    if (strcmp(center->data, "e") == 0) {
+    if (center != NULL && strcmp(center->data, "e") == 0) {
         free(center);
         t->center = NULL;
     }
-    if (strcmp(right->data, "e") == 0) {
+    if (right != NULL && strcmp(right->data, "e") == 0) {
         free(right);
         t->right = NULL;
     }
+    /*
+    printf("%s's e children removed\n", t->data);
+    print_tree(t);
+    */
+
+    //update left, center, and right
+    left = t->left;
+    center = t->center;
+    right = t->right;
 
     //set the number of terminal and non-terminal children
     int num_terminal_children = 0;
@@ -372,41 +398,51 @@ tree_data_type evaluate_tree(TREE t) {
 
     if (num_non_terminal_children > 0) {
         //non terminal children exists only in the +x case
-        if (num_non_terminal_children == 1) {
+        if (num_non_terminal_children == 1 && num_terminal_children == 0) {
             //only 1 non terminal child, copy the information in its children to t's children
             if (left != NULL) {
-                TREE tmp1 = left->left;
-                TREE tmp2 = left->center;
-                t->center = *(create_tree(tmp2->data));
-                left->data = tmp1->data;
+                TREE leftleft = left->left;
+                TREE leftcenter = left->center;
+
+                t->center = *(create_tree(leftcenter->data));
+                left->data = leftleft->data;
+
+                center = t->center;
 
                 left->terminal = 1;
                 center->terminal = 1;
 
-                free(tmp1);
-                free(tmp2);
+                free(leftleft);
+                free(leftcenter);
             } else if (center != NULL) {
-                TREE tmp1 = center->left;
-                TREE tmp2 = center->center;
-                t->left = *(create_tree(tmp1->data));
-                center->data = tmp2->data;
+                TREE centerleft = center->left;
+                TREE centercenter = center->center;
+
+                t->left = *(create_tree(centerleft->data));
+                center->data = centercenter->data;
+
+                left = t->left;
 
                 left->terminal = 1;
                 center->terminal = 1;
 
-                free(tmp1);
-                free(tmp2);
+                free(centerleft);
+                free(centercenter);
             } else {
-                TREE tmp1 = right->left;
-                TREE tmp2 = right->center;
-                t->left = *(create_tree(tmp1->data));
-                t->center = *(create_tree(tmp2->data));
+                TREE rightleft = right->left;
+                TREE rightcenter = right->center;
+
+                t->left = *(create_tree(rightleft->data));
+                t->center = *(create_tree(rightcenter->data));
+
+                left = t->left;
+                center = t->center;
 
                 left->terminal = 1;
                 center->terminal = 1;
 
-                free(tmp1);
-                free(tmp2);
+                free(rightleft);
+                free(rightcenter);
                 free(right);
                 t->right = NULL;
             }
@@ -443,14 +479,15 @@ tree_data_type evaluate_tree(TREE t) {
     } else {
         //all children are terminals (recursion "succeeded")
         if (num_terminal_children == 0) {
-            //leaf found (which shouldn't happen)
-            return "Unable to evaluate node with no children\n";
+            //only children were e
+            t->data = "e";
+            t->terminal = 1;
         } else if (num_terminal_children == 1) {
             //only child is 1 terminal, so bubble it up (will always be the left child because children are inserted left first)
             t->data = left->data;
             t->terminal = 1;
             free(left);
-            t->left == NULL;
+            t->left = NULL;
         } else if (num_terminal_children == 2) {
             //this is either the +x case (which is handled above), or it is the concatenation of a number and a digit
             if (strcmp(t->data, "N") == 0) {
@@ -473,7 +510,11 @@ tree_data_type evaluate_tree(TREE t) {
             t->right = NULL;
         }
     }
-
+    /*
+    printf("%s\n", "============");
+    print_tree(t);
+    printf("\n");
+    */
 }
 
 tree_data_type *evaluate_node(tree_data_type left, tree_data_type center, tree_data_type right) {
@@ -530,21 +571,25 @@ void free_tree(TREE t) {
 }
 
 void print_tree(TREE t) {
-    //create a string buffer to store the final tree string
-    int n = count_tree_nodes(t);
-    char buf[(n*n)+(4*n)+1];
+    if (t != NULL) {
+        //create a string buffer to store the final tree string
+        int n = count_tree_nodes(t);
+        char buf[(n*n)+(4*n)+1];
 
-    //copy that string into the buffer and append a newline and a tab
-    strcpy(buf, t->data);
-    strcat(buf, "(");
-    if (t->left != NULL) strcat(buf, "\n");
+        //copy that string into the buffer and append a newline and a tab
+        strcpy(buf, t->data);
+        strcat(buf, "(");
+        if (t->left != NULL) strcat(buf, "\n");
 
-    //do the recursive stuff to build the middle of the string (all non-root nodes)
-    print_tree_helper(t, buf, 1);
+        //do the recursive stuff to build the middle of the string (all non-root nodes)
+        print_tree_helper(t, buf, 1);
 
-    //finish off the string and print it
-    strcat(buf, ")");
-    printf("%s\n", buf);
+        //finish off the string and print it
+        strcat(buf, ")");
+        printf("%s\n", buf);
+    } else {
+        printf("%s\n", "Empty Tree");
+    }
 }
 
 void print_tree_helper(TREE t, char *buf, int level) {
