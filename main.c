@@ -3,6 +3,7 @@
 #include "ParseTree.h"
 #include "RDP.h"
 #include "helpers/GenPrint.h"
+#include "TP.h"
 
 int main() {
 
@@ -47,6 +48,8 @@ int main() {
     */
 
     read_strings_from_file("test_expressions.txt", 1);
+
+    read_strings_from_file_for_table("test_expressions.txt", 1);
 
     return 0;
 }
