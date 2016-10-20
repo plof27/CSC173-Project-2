@@ -77,25 +77,31 @@ TREE *parse_string_table(char *w) {
     TREE e = *(create_tree("E"));
     LIST for_tree = NULL;
     char temp;
-    while ((*dex)!= 0 || *w != '\0') {
+    while ((*dex)!= -1 || *w != '\0') {
           printf("Line/Loop %d\n",81);
             temp=do_a_step(stacky, dex, look_ahead_table(w), for_tree, e);
+            int i=0;
 
+            for (i=0; i<=(*dex); i++ )
+                printf("STACK: %c\n", *(stacky+(*dex)-i));
           //insert stuff to list here
           //make sure these are strings
-          if(temp=='X'){
+          if(temp =='X'){
             break;
           }
           //other two cases for failure
 
         //does this do anything anymore??
-          if (look_ahead_table(w)==*(stacky+(*dex))) {
+        char buf[2];
+        buf[0] = *(stacky+(*dex));
+        buf[1] = '\0';
+          if (strcmp(look_ahead_table(w), buf) == 0) {
             printf("Line %d\n",94 );
             *(stacky+(*dex))='\0';
-            (*dex)-=1;
+            (*dex) = (*dex) - 1;
           //  insertToList(&for_tree, *w);
-            w=w+1;
-
+            consume_input_table(&w);
+            printf(w);
           }
 
           //add to expression tree
@@ -105,24 +111,9 @@ TREE *parse_string_table(char *w) {
     }
     return &e;//TREE e = *(create_tree("E"));
 
-
-//    if (e == NULL) {
-//        printf("Failed to parse \"%s\"\n", bup);
-//        TREE e = NULL;
-//        return &e;
-//    } else {
-//        if (strcmp(look_ahead_table(w), "\0") != 0) {
-//            printf("Failed to reach end of input of \"%s\". Returning partial parse tree.\n", bup);
-//        } else {
-//            printf("\"%s\" successfully parsed.\n", bup);
-//        }
-//        return &e;
-//    }
-
 }
 
-char do_a_step(char *stacky, int *dex, char lookahead, LIST *for_tree, TREE e) {
-printf("Stack: %c\n", *(stacky+(*dex)));
+char do_a_step(char *stacky, int *dex, char *lookahead, LIST *for_tree, TREE e) {
 
   if (*(stacky+(*dex))=='E') {
     printf("Line %d\n",129 );
@@ -141,7 +132,7 @@ printf("Stack: %c\n", *(stacky+(*dex)));
   }
 else  if (*(stacky+(*dex))=='S') {
     printf("Line %d\n",145 );
-    if (lookahead=='+' || lookahead=='-') {
+    if ((strcmp(lookahead,"+")* strcmp(lookahead,"-"))==0) {
       *(stacky+(*dex))='S';
       insertToList(&for_tree,  "S");
       *(stacky+(*dex)+1)='A';
@@ -169,7 +160,7 @@ else  if (*(stacky+(*dex))=='S') {
 else  if (*(stacky+(*dex))=='A') {
     printf("Line %d\n",172 );
 
-    if (lookahead=='+') {
+    if (strcmp(lookahead, "+")==0) {
       *(stacky+(*dex))='T';
       insertToList(&for_tree,  "T");
       *(stacky+(*dex)+1)='+';
@@ -182,7 +173,7 @@ else  if (*(stacky+(*dex))=='A') {
       deleteFromList(&for_tree, "T");
       return 'A';
     }
-    else if (lookahead=='-') {
+    else if (strcmp(lookahead, "-")==0) {
       *(stacky+(*dex))='T';
       insertToList(&for_tree,  "T");
       *(stacky+(*dex)+1)='-';
@@ -217,7 +208,7 @@ else  if (*(stacky+(*dex))=='T') {
   }
 else  if (*(stacky+(*dex))=='P') {
     printf("Line %d\n",215 );
-    if (lookahead=='*' || lookahead=='/') {
+    if ((strcmp(lookahead, "*") * strcmp(lookahead, "/"))==0) {
       //redundant p
       insertToList(&for_tree,  "P");
       *(stacky+(*dex)+1)='G';
@@ -228,10 +219,9 @@ else  if (*(stacky+(*dex))=='P') {
       deleteFromList(&for_tree, "G");
       deleteFromList(&for_tree, "P");
       return 'P';
-    }
-    else {
+    } else {
       *(stacky+(*dex))='\0';
-      (*dex)-=1;
+      (*dex) = (*dex) - 1;
       insertToList(&for_tree,  "");
 
       insert_to_leftmost_nonterminal(e,for_tree);
@@ -241,7 +231,7 @@ else  if (*(stacky+(*dex))=='P') {
   }
 else  if (*(stacky+(*dex))=='G') {
     printf("Line %d\n",239 );
-    if (lookahead=='*') {
+    if (strcmp(lookahead, "*")==0) {
       *(stacky+(*dex))='F';
       insertToList(&for_tree,  "F");
       *(stacky+(*dex)+1)='*';
@@ -253,12 +243,12 @@ else  if (*(stacky+(*dex))=='G') {
       deleteFromList(&for_tree, "F");
       return 'G';
     }
-    else if (lookahead=='/') {
+    else if (strcmp(lookahead, "/")==0) {
       *(stacky+(*dex))='F';
       insertToList(&for_tree,  "F");
       *(stacky+(*dex)+1)='/';
       insertToList(&for_tree,  "/");
-      (*dex)+=1;
+      (*dex) = (*dex) + 1;;
 
 
       insert_to_leftmost_nonterminal(e,for_tree);
@@ -268,15 +258,18 @@ else  if (*(stacky+(*dex))=='G') {
     }
   }
 else  if (*(stacky+(*dex))=='F') {
-    printf("Line %d\n",267 );
-    if (lookahead=='(') {
+    printf("Line %d\n", 271 );
+    printf("Line %d\n", 272 );
+    printf("%s\n", lookahead);
+    if (strcmp(lookahead,"(")==0) {
+        printf("Line %d\n",273 );
       *(stacky+(*dex))=')';
       insertToList(&for_tree,  ")");
       *(stacky+(*dex)+1)='E';
       insertToList(&for_tree,  "E");
       *(stacky+(*dex)+2)='(';
       insertToList(&for_tree,  "(");
-      (*dex)+=2;
+      (*dex) = (*dex) +2;
 
 
       insert_to_leftmost_nonterminal(e,for_tree);
@@ -284,8 +277,8 @@ else  if (*(stacky+(*dex))=='F') {
       deleteFromList(&for_tree, "E");
       deleteFromList(&for_tree, "(");
       return 'F';
-    }
-    else if (lookahead=='0' || lookahead=='1' || lookahead=='2' || lookahead=='3' || lookahead=='4' || lookahead=='5' || lookahead=='6' || lookahead=='7' || lookahead=='8' || lookahead=='9'){
+    } else if ((strcmp(lookahead,"0") * strcmp(lookahead,"1") * strcmp(lookahead,"2") * strcmp(lookahead,"3") * strcmp(lookahead,"4") * strcmp(lookahead,"5") * strcmp(lookahead,"6") * strcmp(lookahead,"7") * strcmp(lookahead,"8") * strcmp(lookahead,"9"))==0){
+      printf("Line %d\n",289 );
       *(stacky+(*dex))='N';
       insertToList(&for_tree,  "N");
 
@@ -294,25 +287,28 @@ else  if (*(stacky+(*dex))=='F') {
       deleteFromList(&for_tree, "N");
       return 'F';
     }
+    else
+        printf("Line %d\n",298 );
   }
-  if (*(stacky+(*dex))=='N') {
+  else if (*(stacky+(*dex))=='N') {
     printf("Line %d\n",295 );
-    if (lookahead=='0' || lookahead=='1' || lookahead=='2' || lookahead=='3' || lookahead=='4' || lookahead=='5' || lookahead=='6' || lookahead=='7' || lookahead=='8' || lookahead=='9') {
+    if ((strcmp(lookahead,"0") * strcmp(lookahead,"1") * strcmp(lookahead,"2") * strcmp(lookahead,"3") * strcmp(lookahead,"4") * strcmp(lookahead,"5") * strcmp(lookahead,"6") * strcmp(lookahead,"7") * strcmp(lookahead,"8") * strcmp(lookahead,"9"))==0) {
       *(stacky+(*dex))='B';
       insertToList(&for_tree,  "B");
       *(stacky+(*dex)+1)='D';
       insertToList(&for_tree,  "D");
-      (*dex)+=1;
+      (*dex) = (*dex) + 1;
 
       insert_to_leftmost_nonterminal(e,for_tree);
       deleteFromList(&for_tree, "D");
       deleteFromList(&for_tree, "B");
+      if (for_tree == NULL) printf("%s\n", "DING");
       return 'N';
     }
   }
-  if (*(stacky+(*dex))=='B') {
+  else if (*(stacky+(*dex))=='B') {
     printf("Line %d\n",310 );
-    if (lookahead=='0' || lookahead=='1' || lookahead=='2' || lookahead=='3' || lookahead=='4' || lookahead=='5' || lookahead=='6' || lookahead=='7' || lookahead=='8' || lookahead=='9') {
+    if ((strcmp(lookahead,"0") * strcmp(lookahead,"1") * strcmp(lookahead,"2") * strcmp(lookahead,"3") * strcmp(lookahead,"4") * strcmp(lookahead,"5") * strcmp(lookahead,"6") * strcmp(lookahead,"7") * strcmp(lookahead,"8") * strcmp(lookahead,"9"))==0) {
       *(stacky+(*dex))='N';
       insertToList(&for_tree,  "N");
 
@@ -323,7 +319,7 @@ else  if (*(stacky+(*dex))=='F') {
     }
     else {
       *(stacky+(*dex))='\0';
-      (*dex)-=1;
+      (*dex) = (*dex) - 1;
       insertToList(&for_tree,  "");
 
       insert_to_leftmost_nonterminal(e,for_tree);
@@ -331,9 +327,9 @@ else  if (*(stacky+(*dex))=='F') {
       return 'B';
     }
   }
-  if (*(stacky+(*dex))=='D') {
+  else if (*(stacky+(*dex))=='D') {
     printf("Line %d\n",331 );
-    if (lookahead=='0') {
+    if (strcmp(lookahead, "0")==0) {
       *(stacky+(*dex))='0';
       insertToList(&for_tree,  "0");
 
@@ -341,7 +337,7 @@ else  if (*(stacky+(*dex))=='F') {
       deleteFromList(&for_tree, "0");
       return 'D';
     }
-    if (lookahead=='1'){
+    if (strcmp(lookahead, "1")==0){
       *(stacky+(*dex))='1';
       insertToList(&for_tree,  "1");
 
@@ -350,7 +346,7 @@ else  if (*(stacky+(*dex))=='F') {
       deleteFromList(&for_tree, "1");
       return 'D';
     }
-    if (lookahead=='2'){
+    if (strcmp(lookahead, "2")==0){
       *(stacky+(*dex))='2';
       insertToList(&for_tree,  "2");
 
@@ -358,7 +354,7 @@ else  if (*(stacky+(*dex))=='F') {
       deleteFromList(&for_tree, "2");
       return 'D';
     }
-    if (lookahead=='3'){
+    if (strcmp(lookahead, "3")==0){
       *(stacky+(*dex))='3';
       insertToList(&for_tree,  "3");
 
@@ -366,7 +362,7 @@ else  if (*(stacky+(*dex))=='F') {
       deleteFromList(&for_tree, "3");
       return 'D';
     }
-    if (lookahead=='4'){
+    if (strcmp(lookahead, "4")==0){
       *(stacky+(*dex))='4';
       insertToList(&for_tree,  "4");
 
@@ -374,7 +370,7 @@ else  if (*(stacky+(*dex))=='F') {
       deleteFromList(&for_tree, "4");
       return 'D';
     }
-    if (lookahead=='5'){
+    if (strcmp(lookahead, "5")==0){
       *(stacky+(*dex))='5';
       insertToList(&for_tree,  "5");
 
@@ -382,7 +378,7 @@ else  if (*(stacky+(*dex))=='F') {
       deleteFromList(&for_tree, "5");
       return 'D';
     }
-    if (lookahead=='6'){
+    if (strcmp(lookahead, "6")==0){
       *(stacky+(*dex))='6';
       insertToList(&for_tree,  "6");
 
@@ -390,7 +386,7 @@ else  if (*(stacky+(*dex))=='F') {
       deleteFromList(&for_tree, "6");
       return 'D';
     }
-    if (lookahead=='7'){
+    if (strcmp(lookahead, "7")==0){
       *(stacky+(*dex))='7';
       insertToList(&for_tree,  "7");
 
@@ -398,7 +394,7 @@ else  if (*(stacky+(*dex))=='F') {
       deleteFromList(&for_tree, "7");
       return 'D';
     }
-    if (lookahead=='8'){
+    if (strcmp(lookahead, "8")==0){
       *(stacky+(*dex))='8';
       insertToList(&for_tree,  "8");
 
@@ -406,7 +402,7 @@ else  if (*(stacky+(*dex))=='F') {
       deleteFromList(&for_tree, "8");
       return 'D';
     }
-    if (lookahead=='9'){
+    if (strcmp(lookahead, "9")==0){
       *(stacky+(*dex))='9';
       insertToList(&for_tree,  "9");
 
@@ -418,6 +414,7 @@ else  if (*(stacky+(*dex))=='F') {
   //Fail, lookahead didn't match anything
   printf("Recieved %c, matched no accepted input\n", lookahead );
   *(stacky+(*dex))='X';
+  return 'X';
 }
 
 
