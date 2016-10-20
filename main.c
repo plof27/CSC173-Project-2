@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "ParseTree.h"
 #include "RDP.h"
-#include "helpers/GenPrint.h"
 #include "TP.h"
 
 int main() {
