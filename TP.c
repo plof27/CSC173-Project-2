@@ -63,7 +63,7 @@ void read_strings_from_file_for_table(char *filename, int eval) {
 TREE *parse_string_table(char *w) {
     char *bup = w;
     char *stacky = malloc(sizeof(char)*100);
-printf("Line %d\n",66 );
+    printf("Line %d\n",66 );
 
     *stacky='S';
     *(stacky+1)='T';
@@ -71,38 +71,36 @@ printf("Line %d\n",66 );
     int step;
 
     int *dex;
-    (*dex)=1;
-    *stacky='E';
+    (*dex)=0;
+    (*stacky)='E';
 
     TREE e = *(create_tree("E"));
     LIST for_tree = NULL;
-printf("Line %d\n",77 );
     char temp;
     while ((*dex)!= 0 || *w != '\0') {
-      printf("Line/Loop %d\n",81);
-        temp=do_a_step(stacky, dex, look_ahead_table(w), for_tree, e);
+          printf("Line/Loop %d\n",81);
+            temp=do_a_step(stacky, dex, look_ahead_table(w), for_tree, e);
 
-      //insert stuff to list here
-      //make sure these are strings
-      if(temp=='X'){
-        break;
-      }
-      //other two cases for failure
+          //insert stuff to list here
+          //make sure these are strings
+          if(temp=='X'){
+            break;
+          }
+          //other two cases for failure
 
+        //does this do anything anymore??
+          if (look_ahead_table(w)==*(stacky+(*dex))) {
+            printf("Line %d\n",94 );
+            *(stacky+(*dex))='\0';
+            (*dex)-=1;
+          //  insertToList(&for_tree, *w);
+            w=w+1;
 
-    //does this do anything anymore??
-      if (look_ahead_table(w)==*(stacky+(*dex))) {
-        printf("Line %d\n",94 );
-        *(stacky+(*dex))='\0';
-        (*dex)-=1;
-      //  insertToList(&for_tree, *w);
-        w=w+1;
+          }
 
-      }
-
-      //add to expression tree
-      // insert_to_leftmost_nonterminal(e,for_tree);
-      // clear(for_tree);
+          //add to expression tree
+          // insert_to_leftmost_nonterminal(e,for_tree);
+          // clear(for_tree);
 
     }
     return &e;//TREE e = *(create_tree("E"));
@@ -124,8 +122,7 @@ printf("Line %d\n",77 );
 }
 
 char do_a_step(char *stacky, int *dex, char lookahead, LIST *for_tree, TREE e) {
-printf("Line %c\n", *(stacky+(*dex)));
-printf("Line %d\n",126 );
+printf("Stack: %c\n", *(stacky+(*dex)));
 
   if (*(stacky+(*dex))=='E') {
     printf("Line %d\n",129 );
