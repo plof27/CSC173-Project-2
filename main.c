@@ -48,5 +48,7 @@ int main() {
 
     read_strings_from_file("test_expressions.txt", 1);
 
+    read_strings_from_cli(1);
+
     return 0;
 }

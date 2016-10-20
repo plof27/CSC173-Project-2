@@ -53,6 +53,36 @@ void read_strings_from_file(char *filename, int eval) {
     }
 }
 
+void read_strings_from_cli(int eval) {
+    printf("%s\n", "Reading expressions from stdin. Invoke EOF to finish.");
+    char buf[100];
+    int len;
+    //read lines from the file untill EOF is reached
+    while (fgets(buf, 100, stdin)) {
+        //remove the \n (also ensure the last character is \0)
+        int len = strlen(buf);
+        char short_buf[len];
+        strcpy(short_buf, buf);
+        if (short_buf[len-1] !='\0') short_buf[len-1] = '\0';
+
+        //do the things
+        printf("Attempting to parse \"%s\"\n", short_buf);
+        TREE t = *(parse_string(short_buf));
+        if (t != NULL) {
+            printf("%s\n", "Printing parse tree...");
+            print_tree(t);
+            if (eval == 1) {
+                printf("Attempting to evaluate \"%s\"\n", short_buf);
+                printf("%s = %s\n", short_buf, evaluate_tree(t));
+            } else {
+                free_tree(t);
+            }
+        }
+        printf("\n");
+    }
+}
+
+
 TREE *parse_string(char *w) {
     char *bup = w;
     TREE e = *(E(&w));
